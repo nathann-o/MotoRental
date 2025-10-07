@@ -10,6 +10,16 @@ public class AppDbContext : DbContext
         _dispatcher = dispatcher;
     }
 
+    public DbSet<Motorcycle> Motorcycles { get; set; }
+    public DbSet<Rental> Rentals { get; set; }
+    public DbSet<Rider> Riders { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        base.OnModelCreating(modelBuilder);
+    }
+
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var result = await base.SaveChangesAsync(cancellationToken);
