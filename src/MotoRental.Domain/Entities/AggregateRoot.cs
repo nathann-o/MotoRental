@@ -1,6 +1,4 @@
-﻿using MotoRental.Domain.Events;
-
-public abstract class AggregateRoot
+﻿public abstract class AggregateRoot
 {
     private readonly List<IDomainEvent> _domainEvents = new();
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
