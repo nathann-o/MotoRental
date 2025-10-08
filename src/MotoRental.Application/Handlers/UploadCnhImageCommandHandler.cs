@@ -10,12 +10,12 @@ namespace MotoRental.Application.Handlers
     public class UploadCnhImageCommandHandler
     {
         private readonly IRiderRepository _riderRepository;
-        private readonly IStorageService _storageService;
+        //private readonly IStorageService _storageService;
 
-        public UploadCnhImageCommandHandler(IRiderRepository riderRepository, IStorageService storageService)
+        public UploadCnhImageCommandHandler(IRiderRepository riderRepository)//, IStorageService storageService)
         {
             _riderRepository = riderRepository;
-            _storageService = storageService;
+            //_storageService = storageService;
         }
 
         public async Task<string> HandleAsync(Guid riderId, Stream imageStream, string fileName, string contentType, CancellationToken ct = default)
@@ -30,7 +30,8 @@ namespace MotoRental.Application.Handlers
             var finalName = $"{Guid.NewGuid()}{ext}";
             var container = "riders-cnh";
 
-            var url = await _storageService.SaveAsync(container, imageStream, finalName, ct);
+            //var url = await _storageService.SaveAsync(container, imageStream, finalName, ct);
+            var url = string.Empty;
 
             rider.UpdateCnhImage(url);
             await _riderRepository.SaveChangesAsync(ct);

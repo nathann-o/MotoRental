@@ -12,6 +12,12 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
+        services.AddScoped<IMotorcycleRepository, MotorcycleRepository>();
+        services.AddScoped<IRiderRepository, RiderRepository>();
+        services.AddScoped<IRentalRepository, RentalRepository>();
+
+        services.AddScoped<IRentalDomainService, RentalDomainService>();
+
         services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
