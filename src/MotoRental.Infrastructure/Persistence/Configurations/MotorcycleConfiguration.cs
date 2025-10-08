@@ -18,6 +18,10 @@ namespace MotoRental.Infrastructure.Persistence.Configurations
                 .HasMaxLength(100);
 
             builder.Property(v => v.Plate)
+                .HasConversion(
+                    plate => plate.Value, 
+                    value => Plate.Create(value)
+                )
                 .IsRequired()
                 .HasMaxLength(10);
 
