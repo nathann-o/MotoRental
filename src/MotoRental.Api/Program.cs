@@ -5,52 +5,42 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
+// Add services to the container
 builder.Services.AddControllers();
 
+// Infra e Application
 builder.Services.AddInfrastructure(builder.Configuration);
-
 builder.Services.AddApplication();
 
-//builder.Services.AddControllers()
-//    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<MotorcycleCreateDtoValidator>());
-
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "MotoRental API", Version = "v1" });
 
-
-    // XML comments (optional) - generate XML docs in csproj
+    // XML comments (opcional)
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    if (File.Exists(xmlPath)) c.IncludeXmlComments(xmlPath);
+    if (File.Exists(xmlPath))
+        c.IncludeXmlComments(xmlPath);
 });
-
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-
+// Configure o pipeline HTTP
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "MotoRental API V1");
-    c.RoutePrefix = "swagger"; // swagger available at /swagger
+    c.RoutePrefix = "swagger"; // Acessar via /swagger
 });
 
-app.UseHttpsRedirection();
+//Remova o HTTPS redirection se o container não usa certificado
+// app.UseHttpsRedirection();
 
 app.MapControllers();
 
+// Migrate DB automaticamente
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -58,4 +48,3 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
-
