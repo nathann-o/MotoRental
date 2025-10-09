@@ -9,7 +9,7 @@ services:
     depends_on:
       - db
     environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_ENVIRONMENT: "Docker"
       ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=motorental;Username=postgres;Password=postgres"
 
   db:
@@ -28,6 +28,17 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: motorental_rabbitmq
+    ports:
+      - "5672:5672"   
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    restart: unless-stopped
 
 volumes:
   pgdata:

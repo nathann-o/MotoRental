@@ -1,14 +1,18 @@
 ﻿using MotoRental.Application.DTOs;
+using MotoRental.Application.Messaging;
+using System.Reflection;
 
 namespace MotoRental.Application.Handlers
 {
     public class RegisterMotorcycleCommandHandler
     {
         private readonly IMotorcycleRepository _motorcycleRepository;
+        private readonly IRabbitMqPublisher _publisher;
 
-        public RegisterMotorcycleCommandHandler(IMotorcycleRepository motorcycleRepository)
+        public RegisterMotorcycleCommandHandler(IMotorcycleRepository motorcycleRepository, IRabbitMqPublisher publisher)
         {
             _motorcycleRepository = motorcycleRepository;
+            _publisher = publisher;
         }
 
         public async Task<MotorcycleDto> HandleAsync(MotorcycleCreateDto dto, CancellationToken ct = default)
@@ -25,13 +29,19 @@ namespace MotoRental.Application.Handlers
             await _motorcycleRepository.AddAsync(motorcycle, ct);
             await _motorcycleRepository.SaveChangesAsync(ct);
 
-            return new MotorcycleDto
+            var motoNew = new MotorcycleDto
             {
                 Id = motorcycle.Id,
                 Year = motorcycle.Year,
                 Model = motorcycle.Model,
                 Plate = motorcycle.Plate.Value
             };
+
+            await _publisher.PublishMotorcycleCreatedAsync(motoNew);
+
+            return motoNew;
+
+
         }
     }
 }
