@@ -17,13 +17,20 @@ namespace MotoRental.Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasMaxLength(100);
 
-            builder.Property(v => v.Plate)
-                .HasConversion(
-                    plate => plate.Value, 
-                    value => Plate.Create(value)
-                )
-                .IsRequired()
-                .HasMaxLength(10);
+            //builder.Property(v => v.Plate)
+            //    .HasConversion(
+            //        plate => plate.Value,
+            //        value => Plate.Create(value)
+            //    )
+            //    .IsRequired()
+            //    .HasMaxLength(10);
+
+            builder.OwnsOne(m => m.Plate, plate =>
+            {
+                plate.Property(p => p.Value)
+                    .HasColumnName("Plate")
+                    .IsRequired();
+            });
 
             builder.Property(v => v.Year)
                 .IsRequired();

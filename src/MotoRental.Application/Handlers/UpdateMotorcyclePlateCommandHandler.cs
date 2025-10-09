@@ -28,6 +28,8 @@ namespace MotoRental.Application.Handlers
             var plateVo = Plate.Create(newPlate);
             moto.UpdatePlate(plateVo);
 
+            await _motorcycleRepository.UpdateAsync(moto);
+
             await _motorcycleRepository.SaveChangesAsync(ct);
 
             return new MotorcycleDto

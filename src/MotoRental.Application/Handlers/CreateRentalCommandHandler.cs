@@ -50,7 +50,7 @@ namespace MotoRental.Application.Handlers
                 _ => throw new DomainException("Invalid plan selected.")
             };
 
-            var rental = Rental.Create(Guid.Empty, dto.RiderId, dto.MotorcycleId, plan, dto.CreatedAt);
+            var rental = Rental.Create(Guid.Empty, dto.RiderId, dto.MotorcycleId, plan, dto.CreatedAt, dto.EndDate, dto.ExpectedEndDate);
 
             await _rentalRepository.AddAsync(rental, ct);
             await _rentalRepository.SaveChangesAsync(ct);

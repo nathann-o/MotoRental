@@ -14,7 +14,7 @@
 
         if (!rider.HasCategoryA()) throw new DomainException("Rider must have category A to rent a motorcycle.");
 
-        var rental = Rental.Create(Guid.Empty, riderId, motorcycleId, plan, now);
+        var rental = Rental.Create(Guid.Empty, riderId, motorcycleId, plan, now, now, now);
         return rental;
     }
 

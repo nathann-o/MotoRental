@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace MotoRental.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("entregadores")]
     public class RidersController : ControllerBase
     {
         private readonly RegisterRiderCommandHandler _registerHandler;
@@ -30,25 +30,32 @@ namespace MotoRental.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] RiderCreateDto dto)
         {
-            var result = await _registerHandler.HandleAsync(dto);
-            return Created($"/api/riders/{result.Id}", result);
+            try
+            {
+                var result = await _registerHandler.HandleAsync(dto);
+                return Created();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-
+        //NOT IMPLEMENTED YET
         /// <summary>
         /// Upload CNH image as base64 in request body: { "imagem_cnh": "<base64>" }
         /// </summary>
         [HttpPost("{id:guid}/cnh")]
-        public async Task<IActionResult> UploadCnh(Guid id, [FromBody] UploadCnhImageRequest request)
+        public IActionResult UploadCnh(Guid id, [FromBody] UploadCnhImageRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.ImagemCnh))
+            if (request == null || string.IsNullOrWhiteSpace(request.imagem_cnh))
                 return BadRequest(new { message = "imagem_cnh is required in the request body (base64 string)." });
 
 
             byte[] bytes;
             try
             {
-                bytes = Convert.FromBase64String(request.ImagemCnh);
+                bytes = Convert.FromBase64String(request.imagem_cnh);
             }
             catch
             {
@@ -63,13 +70,11 @@ namespace MotoRental.Api.Controllers
             //using var ms = new MemoryStream(bytes);
             //var url = await _uploadHandler.HandleAsync(id, ms, fileName, contentType);
 
-            var url = string.Empty;
 
-
-            return Created($"/api/riders/{id}/cnh", new { url });
+            return Created();
         }
     }
 
 
-    public record UploadCnhImageRequest(string ImagemCnh);
+    public record UploadCnhImageRequest(string imagem_cnh);
 }

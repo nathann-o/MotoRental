@@ -1,6 +1,7 @@
 ﻿public interface IMotorcycleRepository
 {
     Task AddAsync(Motorcycle moto, CancellationToken ct = default);
+    Task UpdateAsync(Motorcycle moto);
     Task<Motorcycle> GetByIdAsync(Guid id, CancellationToken ct = default);
     Task<Motorcycle> GetByPlateAsync(string plate, CancellationToken ct = default);
     Task<IEnumerable<Motorcycle>> ListAsync(string plateFilter = null, CancellationToken ct = default);

@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using MotoRental.Application.DTOs;
 using MotoRental.Application.Handlers;
 
 namespace MotoRental.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("motos")]
     public class MotorcyclesController : ControllerBase
     {
         private readonly RegisterMotorcycleCommandHandler _registerHandler;
@@ -36,8 +37,16 @@ namespace MotoRental.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] MotorcycleCreateDto dto)
         {
-            var result = await _registerHandler.HandleAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            try
+            {
+                await _registerHandler.HandleAsync(dto);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+            return Ok();
         }
 
 
@@ -45,9 +54,19 @@ namespace MotoRental.Api.Controllers
         /// Get motorcycles (optional plate filter)
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] string? plate)
+        public async Task<IActionResult> Get([FromQuery] string? placa)
         {
-            var result = await _getHandler.HandleAsync(plate);
+            var result = await _getHandler.HandleAsync(placa?.ToUpper());
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Update motorcycle plate
+        /// </summary>
+        [HttpPut("{id:guid}/placa")]
+        public async Task<IActionResult> UpdatePlate(Guid id, [FromBody] UpdatePlateDto dto)
+        {
+            var result = await _updateHandler.HandleAsync(id, dto.Placa);
             return Ok(result);
         }
 
@@ -72,16 +91,6 @@ namespace MotoRental.Api.Controllers
             return Ok(dto);
         }
 
-        /// <summary>
-        /// Update motorcycle plate
-        /// </summary>
-        [HttpPut("{id:guid}/plate")]
-        public async Task<IActionResult> UpdatePlate(Guid id, [FromBody] UpdatePlateDto dto)
-        {
-            var result = await _updateHandler.HandleAsync(id, dto.Plate);
-            return Ok(result);
-        }
-
 
         /// <summary>
         /// Delete motorcycle (only if no rentals exist)
@@ -89,10 +98,22 @@ namespace MotoRental.Api.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _deleteHandler.HandleAsync(id);
-            return NoContent();
+            try
+            {
+                var m = await _motorcycleRepository.GetByIdAsync(id);
+                if (m == null) 
+                    return NotFound();
+
+                await _deleteHandler.HandleAsync(id);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+            
         }
 
-        public record UpdatePlateDto(string Plate);
+        public record UpdatePlateDto(string Placa);
     }
 }

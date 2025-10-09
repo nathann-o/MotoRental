@@ -16,6 +16,12 @@ public class MotorcycleRepository : IMotorcycleRepository
         await _context.Motorcycles.AddAsync(moto, ct);
     }
 
+    public async Task UpdateAsync(Motorcycle moto)
+    {
+        _context.Motorcycles.Update(moto);
+        await Task.CompletedTask;
+    }
+
     public async Task<Motorcycle> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
         return await _context.Motorcycles

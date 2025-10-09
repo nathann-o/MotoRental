@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MotoRental.Infrastructure.Persistence.Configurations;
 
 public class AppDbContext : DbContext
 {
@@ -16,6 +17,8 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new MotorcycleConfiguration());
+
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         base.OnModelCreating(modelBuilder);
     }

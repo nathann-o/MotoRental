@@ -13,7 +13,7 @@ public sealed class Rental : AggregateRoot
 
     private Rental() { }
 
-    public static Rental Create(Guid id, Guid riderId, Guid motorcycleId, Plan plan, DateTime createdAt)
+    public static Rental Create(Guid id, Guid riderId, Guid motorcycleId, Plan plan, DateTime createdAt, DateTime endDate, DateTime expectedEndDate)
     {
         if (id == Guid.Empty) id = Guid.NewGuid();
         var start = createdAt.Date.AddDays(1);
