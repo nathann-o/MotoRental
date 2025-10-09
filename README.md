@@ -19,8 +19,8 @@ Certifique-se de ter instalado:
 ### 2️ Clonar o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/motorental.git
-cd motorental
+git clone https://github.com/nathann-o/MotoRental.git
+cd MotoRental
 ```
 
 ---
